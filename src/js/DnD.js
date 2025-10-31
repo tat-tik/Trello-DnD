@@ -96,7 +96,7 @@ export default class DnD {
       
       this.ghostEl = card.cloneNode(true);
       this.ghostEl.classList.add('dragged');
-      document.body.appendChild(this.ghostEl);
+      document.body.append(this.ghostEl);
       this.ghostEl.style.left = `${this.origin.left}px`;
       this.ghostEl.style.top = `${this.origin.top}px`;
 
@@ -148,7 +148,9 @@ export default class DnD {
 
       this.getCardBack();
 
-      document.body.removeChild(this.ghostEl);
+      // document.body.remove(this.ghostEl);
+  
+      this.ghostEl?.remove();
 
       this.toggleGrabbing();
 
@@ -195,7 +197,8 @@ export default class DnD {
         this.getCardBack();
       }
 
-      document.body.removeChild(this.ghostEl);
+      // document.body.removeChild(this.ghostEl);
+      this.ghostEl?.remove();
 
       this.ghostEl = null;
       this.draggedEl = null;

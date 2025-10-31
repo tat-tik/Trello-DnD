@@ -15,6 +15,7 @@ export default class List {
                 <div class="card-composer list-card">
                   <div class="card-composer list-card-details">
                     <textarea class="card-composer-textarea hover" placeholder="Make a title"></textarea>
+                    
                   </div>
                 </div>
                 <div class="controls">
@@ -38,7 +39,7 @@ export default class List {
   }
 
   static cardMarkup(title) {
-    if (title !== '') {
+    if (title.trim() !== '') {
       return `
         <a class="list-card hover" href="#">
           <div class="list-card-details">
@@ -99,7 +100,7 @@ export default class List {
     );
 
     const opener = this.parentEl.querySelector(this.constructor.cardComposerContainerSelector);
-    const textarea = this.parentEl.querySelector(this.constructor.textareaSelector);
+    const textarea = this.parentEl.querySelector(List.textareaSelector);
     opener.addEventListener('click', () => this.constructor.openCardComposer(
       opener,
       composer,
@@ -117,10 +118,12 @@ export default class List {
     const addBtn = this.parentEl.querySelector(this.constructor.newCardButtonSelector);
     const cardsList = this.parentEl.querySelector(this.constructor.cardsListSelector);
     addBtn.addEventListener('click', () => this.constructor.addNewCard(
-      cardsList,
-      composer,
-      this.constructor.cardMarkup(textarea.value),
-    ));
+  cardsList,
+  composer,
+  textarea, 
+  opener,
+));
+    
 
     cardsList.addEventListener('click', (event) => this.constructor.deleteCard(
       cardsList,
@@ -159,16 +162,24 @@ export default class List {
     textarea.focus();
   }
 
-  static addNewCard(cardsList, composer, markup) {
-    const textarea = composer.querySelector('textarea');
-    if (markup !== '') {
-      composer.insertAdjacentHTML('beforebegin', markup);
-      localStorage.setItem(cardsList.dataset.key, cardsList.innerText);
-      textarea.value = '';
+static addNewCard(cardsList, composer, textarea, opener) {
+    const btn = composer.querySelector(this.newCardButtonSelector);
+    const title = textarea.value.trim();
+    
+
+    if (title !== '') {
+      const markup = this.cardMarkup(title);
+      if (markup !== '') {
+        cardsList.insertAdjacentHTML('beforeend', markup);
+        localStorage.setItem(cardsList.dataset.key, cardsList.innerText);
+        textarea.value = '';
+        this.closeCardComposer(opener, composer); 
+        btn.value = '✚ Add another card'; 
+      }
     } else {
-      textarea.focus();
+      textarea.focus(); 
     }
-  }
+}
 
   static deleteCard(cardsList, event, cardSelector, cardRemoverSelector) {
     const { target } = event;
